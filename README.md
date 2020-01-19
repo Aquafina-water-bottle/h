@@ -2,6 +2,7 @@
 Project for HackED 2020.
 
 ## Dependencies
+More specifics listed in `requirements.txt`
 
 - Flask
 - PyMongo
@@ -10,6 +11,6 @@ Project for HackED 2020.
 
 Enter the following command into a terminal
 ```
-python server.py
+python main.py
 ```
 Note: Use Python 3
