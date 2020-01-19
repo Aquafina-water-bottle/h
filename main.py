@@ -158,7 +158,11 @@ def construct_graph(identifier):
 def main():
     key = request.args.get('key', None)
     if key is not None:
+<<<<<<< HEAD
         print("Getting suggestions for", key)
+=======
+        print("Fetching suggestions for", key)
+>>>>>>> h
         return construct_graph(key)
     return render_template('index.html')
 
