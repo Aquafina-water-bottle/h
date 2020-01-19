@@ -34,7 +34,8 @@ import pprint
 from collections import deque
 
 import pymongo
-from pymongo import MongoClient, BulkWriteError, InsertOne, UpdateOne
+from pymongo import MongoClient, InsertOne, UpdateOne
+from pymongo.errors import BulkWriteError
 
 USER = 0
 TITLE = 1
@@ -60,8 +61,8 @@ with open("password.txt") as file:
     _client_password = file.read().strip()
     CLIENT = MongoClient(_client_password)
 
-MEDIA_DB = CLIENT.h2["media"]
-RELATIONS_DB = CLIENT.h2["relations"]
+MEDIA_DB = CLIENT.h["media"]
+RELATIONS_DB = CLIENT.h["relations"]
 
 MEDIA_COLLECTION_INSERTS = deque()
 
@@ -118,7 +119,7 @@ def add_media_data(row):
     MEDIA_COLLECTION_INSERTS.append(data)
 
 
-def write_media_data(row):
+def write_media_data():
     MEDIA_DB.insert_many(MEDIA_COLLECTION_INSERTS, ordered=False)
 
 
