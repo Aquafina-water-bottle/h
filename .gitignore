@@ -133,8 +133,18 @@ tags
 
 # End of https://www.gitignore.io/api/vim,python
 
+# Created by https://www.gitignore.io/api/libreoffice
+# Edit at https://www.gitignore.io/?templates=libreoffice
+
+### LibreOffice ###
+# LibreOffice locks
+.~lock.*#
+
+# End of https://www.gitignore.io/api/libreoffice
+
 
 # test input
 input.txt
 
 notes.txt
+data.csv
