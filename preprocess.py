@@ -1,24 +1,27 @@
 """
 
-"media": {
-    id: {
-        title
-        type
-        percent_like
-        percent_dislike
-        percent_meh
-        num_likes
-        year
-        image
+"h" {
+    "media": {
+        id: {
+            title
+            type
+            percent_like
+            percent_dislike
+            percent_meh
+            num_likes
+            year
+            image
+        }
+    }
+
+    "relations": {
+        media_id1: {
+            media_id2: score
+        }
+
     }
 }
 
-"relations": {
-    media_id1: {
-        media_id2: score
-    }
-
-}
 """
 
 import csv
@@ -91,8 +94,8 @@ def parse_csv():
 def add_media_data(row):
     client = MongoClient()
     media_db = client.h["media"]
-    data = {"_id": row[ID], }
-    media_db.
+    data = {"_id": int(row[ID]), "title": row[TITLE]}
+    media_db.insert(data)
 
 def add_relation_data(rows):
     """
@@ -112,27 +115,22 @@ def add_relation_data(rows):
     print(len(rows))
 
 def main():
-    #client = MongoClient()
+    client = MongoClient()
     #relations_db = client.h["relations"]
-    #media_db = client.h["media"]
+    media_db = client.h["media"]
 
     #sample_media = {"h": "h"}
     #media_db.insert_one(sample_media)
+    #parse_csv()
 
-    parse_csv()
-
-    #print("before")
-    #for media in media_db.find():
-    #    pprint.pprint(media)
+    for media in media_db.find():
+        pprint.pprint(media)
+        print(type(media["_id"]))
 
     # deleting all
-    #db.delete_many({})
-
-    #print("after")
-    #for media in media_db.find():
-    #    pprint.pprint(media)
+    #media_db.delete_many({})
 
 if __name__ == "__main__":
-    #main()
-    parse_csv()
+    main()
+    #parse_csv()
 
