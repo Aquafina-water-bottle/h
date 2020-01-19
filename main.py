@@ -3,6 +3,7 @@ from flask_cors import CORS
 app = Flask(__name__)
 CORS(app)
 
+import time
 
 @app.route('/')
 def main():
@@ -10,6 +11,7 @@ def main():
     content_id = request.args.get('id', None)
     if content_id is not None:
         # TODO: Fetch real data from database
+        time.sleep(5)
         with open("static/graph.json") as file: # Use file to refer to the file object
             data = file.read()
         return data
