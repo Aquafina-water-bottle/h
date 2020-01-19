@@ -11,7 +11,8 @@ import time
 @app.route('/')
 def main():
     
-    content_id = request.args.get('id', None)
+    content_id = request.args.get('key', None)
+    
     if content_id is not None:
         # TODO: Fetch real data from database
         time.sleep(5)
@@ -34,10 +35,21 @@ def search():
 
     querystring = {"v":"3","target":"search","q":query}
 
-    response = requests.request("GET", url, params=querystring)
+    response = requests.get(url, params=querystring)
 
     return json.dumps(response.json()["suggestions"])
 
+@app.route('/api/get_key')
+def get_key():
+    query = request.args.get('query')
+
+    url = "https://tastedive.com/"
+
+    querystring = {"v":query,"t":"","q":"A"}
+
+    response = requests.get(url,params=querystring)
+
+    return response.url.split("/")[-1]
 
 if __name__ == '__main__':
     app.run('127.0.0.1', port=8080, debug=True)

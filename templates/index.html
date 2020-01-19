@@ -13,7 +13,7 @@
 <link href="http://easyautocomplete.com/dist/easy-autocomplete.min.css" rel="stylesheet">
 <link href="http://easyautocomplete.com/dist/easy-autocomplete.themes.min.css" rel="stylesheet">
 
-<button onclick="drawGraph()">Click me</button>
+<button onclick="drawGraph('Frozen-2013')">Click me</button>
 <!-- Resources -->
 <script src="https://www.amcharts.com/lib/4/core.js"></script>
 <script src="https://www.amcharts.com/lib/4/charts.js"></script>
@@ -37,8 +37,18 @@ $( document ).ready(function() {
             enabled: true
         },
         onChooseEvent: function() {
-          var id = $("#searchBar").getSelectedItemData().id;
-          console.log(id);
+          var key_query = $("#searchBar").getSelectedItemData().data;
+          fetch("http://localhost:8080/api/get_key?query="+key_query, {
+            "method": "GET",
+          })
+          .then(response => {
+            response.text().then((data)=>{
+              drawGraph(data);
+            });
+          })
+          .catch(err => {
+            console.log(err);
+          });
         }	
     },
 
@@ -115,7 +125,7 @@ $( document ).ready(function() {
     networkSeries.fontSize = 50;
 
   }); // end am4core.ready()
-  function drawGraph() {
+  function drawGraph(key) {
     am4core.ready(function () {
 
       // Themes begin
@@ -183,7 +193,7 @@ $( document ).ready(function() {
       networkSeries.fontSize = 45;
 
     }); // end am4core.ready()
-    fetch("http://127.0.0.1:8080/?id=4352")
+    fetch("http://127.0.0.1:8080/?key="+key)
       .then(function (response) {
         response.text().then(function (text) {
           var jsonFile = text;
