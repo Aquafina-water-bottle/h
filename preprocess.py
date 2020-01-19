@@ -31,9 +31,10 @@
 import re
 import csv
 import pprint
+from collections import deque
 
 import pymongo
-from pymongo import MongoClient
+from pymongo import MongoClient, BulkWriteError, InsertOne, UpdateOne
 
 USER = 0
 TITLE = 1
@@ -59,9 +60,11 @@ with open("password.txt") as file:
     _client_password = file.read().strip()
     CLIENT = MongoClient(_client_password)
 
-MEDIA_DB = CLIENT.h["media"]
-RELATIONS_DB = CLIENT.h["relations"]
-GLOBAL_RELATIONS = {}
+MEDIA_DB = CLIENT.h2["media"]
+RELATIONS_DB = CLIENT.h2["relations"]
+
+MEDIA_COLLECTION_INSERTS = deque()
+
 
 def parse_csv():
     with open('data.csv', encoding="ISO-8859-1") as csvfile:
@@ -98,23 +101,28 @@ def parse_csv():
                 user_rows.append(row)
                 user_row_ids.add(row[ID])
             else:
-                add_relation_data(user_rows)
+                add_and_write_relation_data(user_rows)
                 stored_user = row[USER]
                 user_rows.clear()
                 user_row_ids.clear()
 
         # final user
-        add_relation_data(user_rows)
+        add_and_write_relation_data(user_rows)
+
+        write_media_data()
+
 
 def add_media_data(row):
     # _id string
-    data = {"_id": row[ID], "title": row[TITLE]}
-    try:
-        MEDIA_DB.insert(data)
-    except pymongo.errors.DuplicateKeyError:
-        pass
+    data = {"_id": row[ID], "title": row[TITLE], "image": row[IMAGE]}
+    MEDIA_COLLECTION_INSERTS.append(data)
 
-def add_relation_data(rows):
+
+def write_media_data(row):
+    MEDIA_DB.insert_many(MEDIA_COLLECTION_INSERTS, ordered=False)
+
+
+def add_and_write_relation_data(rows):
     """
     goes through each row squared
     inserts all of row2 media into row1 as long as row2 != row1
@@ -126,70 +134,37 @@ def add_relation_data(rows):
     # stores row1 -> row2 -> score
     # might have to switch to query
     for row1 in rows:
+
+        k1 = row1[ID]
+        batch = deque()
+
         for row2 in rows:
-            k1 = row1[ID]
             k2 = row2[ID]
             if k1 == k2:
                 continue
 
-            #data2 = {"_id": k2, "$inc": {"score": 1}}
-            #RELATIONS_DB.find_one_and_update(data1, data2 upsert=True)
-            try:
-                RELATIONS_DB[k1].update_one(
-                        {"_id": k2}, {"$inc": {"score": 1}}, upsert=True)
-            except pymongo.errors.DuplicateKeyError:
-                pass
-            #result1.insert(data2)
-
-            #if row1[ID] not in GLOBAL_RELATIONS:
-            #    GLOBAL_RELATIONS[row1[ID]] = {}     # empty dict
-            #if row2[ID] not in GLOBAL_RELATIONS[row1[ID]]:
-            #    GLOBAL_RELATIONS[row1[ID]][row2[ID]] = 0
-            #GLOBAL_RELATIONS[row1[ID]][row2[ID]] += 1
-
-            #data = {"_id": row2[ID],
-            #RELATIONS_DB[row1[ID]]
-
-    for k1 in GLOBAL_RELATIONS:
-        #data1 = {"_id": k1}
-        #result1 = RELATIONS_DB.insert_one(data1)
-        data2_list = [{"_id": k2, "score": GLOBAL_RELATIONS[k1][k2]}
-                for k2 in GLOBAL_RELATIONS[k1]]
+            batch.append(UpdateOne({"_id": k2}, {"$inc": {"score": 1}},
+                                   upsert=True))
 
         try:
-            RELATIONS_DB[k1].insert_many(data2_list)
-        except pymongo.errors.BulkWriteError:
-            pass
+            RELATIONS_DB[k1].bulk_write(batch, ordered=False)
+        except BulkWriteError as bwe:
+            pprint.pprint(bwe.details)
 
-        #for k2 in GLOBAL_RELATIONS[k1]:
-        #    data2 = {"_id": k2, "score": GLOBAL_RELATIONS[k1][k2]}
-        #    #RELATIONS_DB.find_one_and_update(data1, data2 upsert=True)
-        #    try:
-        #        RELATIONS_DB[k1].insert(data2)
-        #    except pymongo.errors.DuplicateKeyError:
-        #        pass
-        #    #result1.insert(data2)
-
-
-    #print(list(row[TITLE] for row in rows))
-    #print(len(rows))
-    #pprint.pprint(GLOBAL_RELATIONS)
 
 def main():
-    client = MongoClient()
-    #relations_db = client.h["relations"]
-    media_db = client.h["media"]
 
     #sample_media = {"h": "h"}
-    #media_db.insert_one(sample_media)
+    #MEDIA_DB.insert_one(sample_media)
     #parse_csv()
 
-    for media in media_db.find():
+    for media in MEDIA_DB.find():
         pprint.pprint(media)
         print(type(media["_id"]))
 
     # deleting all
-    #media_db.delete_many({})
+    #MEDIA_DB.delete_many({})
+
 
 def delete_all():
     MEDIA_DB.delete_many({})
