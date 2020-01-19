@@ -10,8 +10,8 @@ def main():
     content_id = request.args.get('id', None)
     if content_id is not None:
         # TODO: Fetch real data from database
-        with open("graph.json") as file: # Use file to refer to the file object
-            data = file.read();
+        with open("static/graph.json") as file: # Use file to refer to the file object
+            data = file.read()
         return data
         # return {
         #     'Selected': {'id': 10101, 'title': 'Selected Item\'s Title', 'type': 'Movie'},
@@ -20,3 +20,7 @@ def main():
         #     'Books': [{'id': 101112, 'title': 'A Book Title', 'score': 1}],
         # }
     return render_template('index.html')
+
+if __name__ == '__main__':
+    app.run('127.0.0.1', port=8080, debug=True)
+
