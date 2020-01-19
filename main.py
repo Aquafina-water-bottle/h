@@ -22,7 +22,7 @@ def construct_graph(identifier):
 
     for doc in collection.find({'key': identifier}): #, "like": 1}):
         user = doc['user']
-        for docc in collection.find({'user': user, 'id': {'$ne': identifier}}):
+        for docc in collection.find({'user': user, 'key': {'$ne': identifier}}):
             sid = docc['key']
             typ = docc['type']
             if typ == 'Book':
@@ -45,7 +45,6 @@ def construct_graph(identifier):
     heap_movies = [(score, ide) for ide,score in movies.items()]
     heap_games = [(score, ide) for ide,score in games.items()]
 
-    print(heap_movies)
     heapq.heapify(heap_books)
     heapq.heapify(heap_games)
     heapq.heapify(heap_movies)
