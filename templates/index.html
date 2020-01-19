@@ -4,7 +4,7 @@
     width: 100%;
     height: 100%;
   }
-  #searchBar {
+  .center {
     margin: 0 auto;
     display: block;
   }
@@ -13,7 +13,7 @@
 <link href="http://easyautocomplete.com/dist/easy-autocomplete.min.css" rel="stylesheet">
 <link href="http://easyautocomplete.com/dist/easy-autocomplete.themes.min.css" rel="stylesheet">
 
-<button onclick="drawGraph('Frozen-2013')">Click me</button>
+<!-- <button onclick="drawGraph('Frozen-2013')">Click me</button> -->
 <!-- Resources -->
 <script src="https://www.amcharts.com/lib/4/core.js"></script>
 <script src="https://www.amcharts.com/lib/4/charts.js"></script>
@@ -231,7 +231,9 @@ $( document ).ready(function() {
 
 </script>
 
+<div class="center">
 <input id="searchBar" placeholder="Enter a movie, games, book, music artist..."/>
+</div>
 
 <!-- HTML -->
 <div id="chartdiv"></div>
