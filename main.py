@@ -20,9 +20,9 @@ def construct_graph(identifier):
     movies = dict()
     games = dict()
 
-    for doc in collection.find({'key': identifier}).limit(10): #, "like": 1}):
+    for doc in collection.find({'key': identifier}).limit(50): #, "like": 1}):
         user = doc['user']
-        for docc in collection.find({'user': user, 'key': {'$ne': identifier}}).limit(100):
+        for docc in collection.find({'user': user, 'key': {'$ne': identifier}}).limit(200):
             sid = docc['key']
             typ = docc['type']
             if typ == 'Book':
@@ -41,18 +41,21 @@ def construct_graph(identifier):
                 else:
                     games[sid] -= 1
         
-    heap_books = [(str(score), str(ide)) for ide,score in books.items()]
-    heap_movies = [(str(score), str(ide)) for ide,score in movies.items()]
-    heap_games = [(str(score), str(ide)) for ide,score in games.items()]
+    # import re
+    # amazing = re.compile(r'[\-]*\d+')
+    # print([score for ide,score in books.items()])
+    heap_books = [(score, str(ide)) for ide,score in books.items()]
+    heap_movies = [(score, str(ide)) for ide,score in movies.items()]
+    heap_games = [(score, str(ide)) for ide,score in games.items()]
 
     print(heap_movies)
     heapq.heapify(heap_books)
     heapq.heapify(heap_games)
     heapq.heapify(heap_movies)
 
-    recommended_books = heapq.nsmallest(3, heap_books)
-    recommended_movies = heapq.nsmallest(3, heap_movies)
-    recommended_games = heapq.nsmallest(3, heap_games)
+    recommended_books = heapq.nsmallest(5, heap_books)
+    recommended_movies = heapq.nsmallest(5, heap_movies)
+    recommended_games = heapq.nsmallest(5, heap_games)
 
     result_books = []
     result_movies = []
@@ -107,6 +110,16 @@ def construct_graph(identifier):
                         'name': result_books[2][0] if len(result_books) else "",
                         'image': result_books[2][1] if len(result_books) else "",
                         'id': 100
+                    },
+                    {
+                        'name': result_books[3][0] if len(result_books) else "",
+                        'image': result_books[3][1] if len(result_books) else "",
+                        'id': 100
+                    },
+                    {
+                        'name': result_books[4][0] if len(result_books) else "",
+                        'image': result_books[4][1] if len(result_books) else "",
+                        'id': 100
                     }
                 ]
             },
@@ -127,6 +140,16 @@ def construct_graph(identifier):
                         'name': result_movies[2][0] if len(result_movies) else "",
                         'image': result_movies[2][1] if len(result_movies) else "",
                         'id': 100
+                    },
+                    {
+                        'name': result_movies[3][0] if len(result_movies) else "",
+                        'image': result_movies[3][1] if len(result_movies) else "",
+                        'id': 100
+                    },
+                    {
+                        'name': result_movies[4][0] if len(result_movies) else "",
+                        'image': result_movies[4][1] if len(result_movies) else "",
+                        'id': 100
                     }
                 ]
             },
@@ -146,6 +169,16 @@ def construct_graph(identifier):
                     {
                         'name': result_games[2][0] if len(result_games) else "",
                         'image': result_games[2][1] if len(result_games) else "",
+                        'id': 100
+                    },
+                    {
+                        'name': result_games[3][0] if len(result_games) else "",
+                        'image': result_games[3][1] if len(result_games) else "",
+                        'id': 100
+                    },
+                    {
+                        'name': result_games[4][0] if len(result_games) else "",
+                        'image': result_games[4][1] if len(result_games) else "",
                         'id': 100
                     }
                 ]
