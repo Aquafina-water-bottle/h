@@ -22,7 +22,7 @@ def construct_graph(identifier):
 
     for doc in collection.find({'key': identifier}).limit(10): #, "like": 1}):
         user = doc['user']
-        for docc in collection.find({'user': user, 'key': {'$ne': identifier}}).limit(20):
+        for docc in collection.find({'user': user, 'key': {'$ne': identifier}}).limit(100):
             sid = docc['key']
             typ = docc['type']
             if typ == 'Book':
@@ -41,9 +41,9 @@ def construct_graph(identifier):
                 else:
                     games[sid] -= 1
         
-    heap_books = [(score, ide) for ide,score in books.items()]
-    heap_movies = [(score, ide) for ide,score in movies.items()]
-    heap_games = [(score, ide) for ide,score in games.items()]
+    heap_books = [(str(score), str(ide)) for ide,score in books.items()]
+    heap_movies = [(str(score), str(ide)) for ide,score in movies.items()]
+    heap_games = [(str(score), str(ide)) for ide,score in games.items()]
 
     print(heap_movies)
     heapq.heapify(heap_books)
@@ -96,17 +96,17 @@ def construct_graph(identifier):
                     {
                         'name': result_books[0][0] if len(result_books) else "",
                         'image': result_books[0][1] if len(result_books) else "",
-                        'id': result_books[0][2] if len(result_books) else ""
+                        'id': 100
                     },
                     {
                         'name': result_books[1][0] if len(result_books) else "",
                         'image': result_books[1][1] if len(result_books) else "",
-                        'id': result_books[1][2] if len(result_books) else ""
+                        'id': 100
                     },
                     {
                         'name': result_books[2][0] if len(result_books) else "",
                         'image': result_books[2][1] if len(result_books) else "",
-                        'id': result_books[2][2] if len(result_books) else ""
+                        'id': 100
                     }
                 ]
             },
@@ -116,17 +116,17 @@ def construct_graph(identifier):
                     {
                         'name': result_movies[0][0] if len(result_movies) else "",
                         'image': result_movies[0][1] if len(result_movies) else "",
-                        'id': result_movies[0][2] if len(result_movies) else ""
+                        'id': 100
                     },
                     {
                         'name': result_movies[1][0] if len(result_movies) else "",
                         'image': result_movies[1][1] if len(result_movies) else "",
-                        'id': result_movies[1][2] if len(result_movies) else ""
+                        'id': 100
                     },
                     {
                         'name': result_movies[2][0] if len(result_movies) else "",
                         'image': result_movies[2][1] if len(result_movies) else "",
-                        'id': result_movies[2][2] if len(result_movies) else ""
+                        'id': 100
                     }
                 ]
             },
@@ -136,17 +136,17 @@ def construct_graph(identifier):
                     {
                         'name': result_games[0][0] if len(result_games) else "",
                         'image': result_games[0][1] if len(result_games) else "",
-                        'id': result_games[0][2] if len(result_games) else ""
+                        'id': 100
                     },
                     {
                         'name': result_games[1][0] if len(result_games) else "",
                         'image': result_games[1][1] if len(result_games) else "",
-                        'id': result_games[1][2] if len(result_games) else ""
+                        'id': 100
                     },
                     {
                         'name': result_games[2][0] if len(result_games) else "",
                         'image': result_games[2][1] if len(result_games) else "",
-                        'id': result_games[2][2] if len(result_games) else ""
+                        'id': 100
                     }
                 ]
             }
