@@ -1,5 +1,9 @@
+
+<link href="https://fonts.googleapis.com/css?family=Alata&display=swap" rel="stylesheet"> 
+
 <!-- Styles -->
 <style>
+  * {font-family: 'Alata', sans-serif;}
   #chartdiv {
     width: 100%;
     height: 100%;
@@ -221,7 +225,7 @@ $( document ).ready(function() {
             networkSeries.dataFields.value = "id";
             networkSeries.dataFields.name = "name";
             networkSeries.dataFields.children = "children";
-            networkSeries.nodes.template.tooltipText = "{name}:{id}";
+            networkSeries.nodes.template.tooltipText = "{name}";
             networkSeries.nodes.template.fillOpacity = 1;
             networkSeries.manyBodyStrength = -20;
             networkSeries.links.template.strength = 0.8;
@@ -229,7 +233,7 @@ $( document ).ready(function() {
             networkSeries.minRadius = am4core.percent(3);
             
             networkSeries.nodes.template.label.text = "{name}"
-            networkSeries.nodes.template.label.fill = am4core.color("#000");
+            networkSeries.nodes.template.label.fill = am4core.color("#47476b");
             networkSeries.fontSize = 25;
 
             
