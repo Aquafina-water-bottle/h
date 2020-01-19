@@ -6,6 +6,7 @@ More specifics listed in `requirements.txt`
 
 - Flask
 - PyMongo
+- flask-cors
 
 ## Starting the Web Server
 
