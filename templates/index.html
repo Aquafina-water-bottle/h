@@ -13,6 +13,7 @@
 <link href="http://easyautocomplete.com/dist/easy-autocomplete.min.css" rel="stylesheet">
 <link href="http://easyautocomplete.com/dist/easy-autocomplete.themes.min.css" rel="stylesheet">
 
+<button onclick="drawGraph()">Click me</button>
 <!-- Resources -->
 <script src="https://www.amcharts.com/lib/4/core.js"></script>
 <script src="https://www.amcharts.com/lib/4/charts.js"></script>
@@ -24,18 +25,11 @@
 <!-- Chart code -->
 <script>
 
-var options = {
+  var options = {
     url: function(query) {
       return "/api/search?query="+query;
     },
-    getValue: "name",
-
-    template: {
-      type: "description",
-      fields: {
-          description: "year"
-      }
-    },
+    getValue: "value",
 
     list: {
         match: {
@@ -54,39 +48,174 @@ var options = {
 
   $("#searchBar").easyAutocomplete(options);
   
-  fetch("?id=4352")
-    .then(function (response) {
-      response.text().then(function (text) {
-        var jsonFile = text;
-        am4core.ready(function () {
+  am4core.ready(function () {
 
-          // Themes begin
-          am4core.useTheme(am4themes_animated);
-          // Themes end
+    // Themes begin
+    am4core.useTheme(am4themes_animated);
+    // Themes end
 
-          var chart = am4core.create("chartdiv", am4plugins_forceDirected.ForceDirectedTree);
-          var networkSeries = chart.series.push(new am4plugins_forceDirected.ForceDirectedSeries())
+    var chart = am4core.create("chartdiv", am4plugins_forceDirected.ForceDirectedTree);
+    var networkSeries = chart.series.push(new am4plugins_forceDirected.ForceDirectedSeries())
+
+    chart.data = [{
+      "value": 100,
+      "name": "loading"
+    }, {
+      "value": 20,
+      "name": "h"
+    }, {
+      "value": 10,
+      "name": "Loading"
+    }, {
+      "value": 75,
+      "name": "h"
+    }, {
+      "value": 50,
+      "name": "h"
+    }, {
+      "value": 100,
+      "name": "loading"
+    }, {
+      "value": 20,
+      "name": "h"
+    }, {
+      "value": 10,
+      "name": "Loading"
+    }, {
+      "value": 75,
+      "name": "h"
+    }, {
+      "value": 50,
+      "name": "h"
+    }, {
+      "value": 100,
+      "name": "loading"
+    }, {
+      "value": 20,
+      "name": "h"
+    }, {
+      "value": 10,
+      "name": "Loading"
+    }, {
+      "value": 75,
+      "name": "h"
+    }, {
+      "value": 50,
+      "name": "h"
+    }]
+
+    networkSeries.dataFields.value = "value";
+    networkSeries.nodes.template.fillOpacity = 1;
+    networkSeries.manyBodyStrength = -20;
+    networkSeries.links.template.strength = 0.8;
+    networkSeries.minRadius = am4core.percent(3);
+
+    networkSeries.fontSize = 50;
+
+  }); // end am4core.ready()
+  function drawGraph() {
+    am4core.ready(function () {
+
+      // Themes begin
+      am4core.useTheme(am4themes_animated);
+      // Themes end
+
+      var chart = am4core.create("chartdiv", am4plugins_forceDirected.ForceDirectedTree);
+      var networkSeries = chart.series.push(new am4plugins_forceDirected.ForceDirectedSeries())
+
+      chart.data = chart.data = [{
+      "value": 100,
+      "name": "Loading"
+    }, {
+      "value": 20,
+      "name": "h"
+    }, {
+      "value": 10,
+      "name": "h"
+    }, {
+      "value": 75,
+      "name": "h"
+    }, {
+      "value": 50,
+      "name": "h"
+    }, {
+      "value": 100,
+      "name": "Loading"
+    }, {
+      "value": 20,
+      "name": "h"
+    }, {
+      "value": 10,
+      "name": "h"
+    }, {
+      "value": 75,
+      "name": "h"
+    }, {
+      "value": 50,
+      "name": "h"
+    }, {
+      "value": 100,
+      "name": "Loading"
+    }, {
+      "value": 20,
+      "name": "h"
+    }, {
+      "value": 10,
+      "name": "h"
+    }, {
+      "value": 75,
+      "name": "h"
+    }, {
+      "value": 50,
+      "name": "h"
+    }]
+
+      networkSeries.dataFields.value = "value";
+      networkSeries.nodes.template.tooltipText = "{name}:{id}";
+      networkSeries.nodes.template.fillOpacity = 1;
+      networkSeries.manyBodyStrength = -20;
+      networkSeries.links.template.strength = 0.8;
+      networkSeries.minRadius = am4core.percent(3);
+
+      networkSeries.nodes.template.label.text = "{name}"
+      networkSeries.fontSize = 45;
+
+    }); // end am4core.ready()
+    fetch("http://127.0.0.1:8080/?id=4352")
+      .then(function (response) {
+        response.text().then(function (text) {
+          var jsonFile = text;
+
+          am4core.ready(function () {
+
+            // Themes begin
+            am4core.useTheme(am4themes_animated);
+            // Themes end
+
+            var chart = am4core.create("chartdiv", am4plugins_forceDirected.ForceDirectedTree);
+            var networkSeries = chart.series.push(new am4plugins_forceDirected.ForceDirectedSeries())
 
 
-          console.log(jsonFile)
-          console.log("it did get here")
-          chart.data = [JSON.parse(jsonFile)]
+            console.log(jsonFile)
+            console.log("it did get here")
+            chart.data = [JSON.parse(jsonFile)]
 
-          networkSeries.dataFields.value = "id";
-          networkSeries.dataFields.name = "name";
-          networkSeries.dataFields.children = "children";
-          networkSeries.nodes.template.tooltipText = "{name}:{id}";
-          networkSeries.nodes.template.fillOpacity = 1;
-          networkSeries.manyBodyStrength = -20;
-          networkSeries.links.template.strength = 0.8;
-          networkSeries.minRadius = am4core.percent(3);
+            networkSeries.dataFields.value = "id";
+            networkSeries.dataFields.name = "name";
+            networkSeries.dataFields.children = "children";
+            networkSeries.nodes.template.tooltipText = "{name}:{id}";
+            networkSeries.nodes.template.fillOpacity = 1;
+            networkSeries.manyBodyStrength = -20;
+            networkSeries.links.template.strength = 0.8;
+            networkSeries.minRadius = am4core.percent(3);
 
-          networkSeries.nodes.template.label.text = "{name}"
-          networkSeries.fontSize = 10;
+            networkSeries.nodes.template.label.text = "{name}"
+            networkSeries.fontSize = 10;
 
-        }); // end am4core.ready()
+          }); // end am4core.ready()
+        });
       });
-    });
+  }
 
 </script>
 
