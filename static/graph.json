@@ -6,12 +6,12 @@
             "children": [
                 {
                     "name": "A book Title",
-                    "image": "idk.jpg",
+                    "image": "https://assets.pokemon.com/assets/cms2/img/pokedex/full/100.png",
                     "id": 100
                 },
                 {
                     "name": "A Worse Book Title",
-                    "image": "idk.jpg",
+                    "image": "https://assets.pokemon.com/assets/cms2/img/pokedex/full/003.png",
                     "id": 100
                 }
             ]
@@ -21,12 +21,12 @@
             "children": [
                 {
                     "name": "A Good Film",
-                    "image": "idk.jpg",
+                    "image": "https://assets.pokemon.com/assets/cms2/img/pokedex/full/026.png",
                     "id": 100
                 },
                 {
                     "name": "A Bad Film",
-                    "image": "idk.jpg",
+                    "image": "https://assets.pokemon.com/assets/cms2/img/pokedex/full/024.png",
                     "id": 100
                 }
             ]
@@ -36,12 +36,12 @@
             "children": [
                 {
                     "name": "Minecraft",
-                    "image": "idk.jpg",
+                    "image": "https://assets.pokemon.com/assets/cms2/img/pokedex/full/021.png",
                     "id": 100
                 },
                 {
                     "name": "Fortnite",
-                    "image": "idk.jpg",
+                    "image": "https://assets.pokemon.com/assets/cms2/img/pokedex/full/022.png",
                     "id": 100
                 }
             ]
@@ -51,12 +51,12 @@
             "children": [
                 {
                     "name": "Good Music",
-                    "image": "idk.jpg",
+                    "image": "https://assets.pokemon.com/assets/cms2/img/pokedex/full/023.png",
                     "id": 100
                 },
                 {
                     "name": "Austins Music",
-                    "image": "idk.jpg",
+                    "image": "https://assets.pokemon.com/assets/cms2/img/pokedex/full/020.png",
                     "id": 100
                 }
             ]

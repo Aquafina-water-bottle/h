@@ -211,7 +211,13 @@ $( document ).ready(function() {
             console.log(jsonFile)
             console.log("it did get here")
             chart.data = [JSON.parse(jsonFile)]
+            var icon = networkSeries.nodes.template.createChild(am4core.Image);
+            icon.propertyFields.href = "image";
+            icon.horizontalCenter = "middle";
+            icon.verticalCenter = "middle";
 
+
+            
             networkSeries.dataFields.value = "id";
             networkSeries.dataFields.name = "name";
             networkSeries.dataFields.children = "children";
@@ -219,10 +225,14 @@ $( document ).ready(function() {
             networkSeries.nodes.template.fillOpacity = 1;
             networkSeries.manyBodyStrength = -20;
             networkSeries.links.template.strength = 0.8;
+            networkSeries.nodes.template.label.valign = "bottom";
             networkSeries.minRadius = am4core.percent(3);
-
+            
             networkSeries.nodes.template.label.text = "{name}"
-            networkSeries.fontSize = 10;
+            networkSeries.nodes.template.label.fill = am4core.color("#000");
+            networkSeries.fontSize = 25;
+
+            
 
           }); // end am4core.ready()
         });
