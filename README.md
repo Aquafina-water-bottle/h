@@ -5,8 +5,8 @@ Project for HackED 2020.
 More specifics listed in `requirements.txt`
 
 - Flask
+- Flask-Cors
 - PyMongo
-- flask-cors
 
 ## Starting the Web Server
 
