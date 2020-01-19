@@ -1,3 +1,5 @@
+import requests
+
 from flask import Flask, render_template, request
 from flask_cors import CORS
 app = Flask(__name__)
@@ -20,6 +22,19 @@ def main():
         #     'Books': [{'id': 101112, 'title': 'A Book Title', 'score': 1}],
         # }
     return render_template('index.html')
+
+@app.route('/api/search')
+def search():
+    query = request.args.get('query')
+
+    url = "https://tastedive.com/api/autocomplete"
+
+    querystring = {"v":"3","target":"search","q":query}
+
+    response = requests.request("GET", url, params=querystring)
+
+    return response.text
+
 
 if __name__ == '__main__':
     app.run('127.0.0.1', port=8080, debug=True)
