@@ -20,9 +20,9 @@ def construct_graph(identifier):
     movies = dict()
     games = dict()
 
-    for doc in collection.find({'key': identifier}): #, "like": 1}):
+    for doc in collection.find({'key': identifier}).limit(10): #, "like": 1}):
         user = doc['user']
-        for docc in collection.find({'user': user, 'id': {'$ne': identifier}}):
+        for docc in collection.find({'user': user, 'key': {'$ne': identifier}}).limit(20):
             sid = docc['key']
             typ = docc['type']
             if typ == 'Book':
@@ -94,19 +94,19 @@ def construct_graph(identifier):
                 'name': 'Books',
                 'children': [
                     {
-                        'name': result_books[0][0],
-                        'image': result_books[0][1],
-                        'id': result_books[0][2]
+                        'name': result_books[0][0] if len(result_books) else "",
+                        'image': result_books[0][1] if len(result_books) else "",
+                        'id': result_books[0][2] if len(result_books) else ""
                     },
                     {
-                        'name': result_books[1][0],
-                        'image': result_books[1][1],
-                        'id': result_books[1][2]
+                        'name': result_books[1][0] if len(result_books) else "",
+                        'image': result_books[1][1] if len(result_books) else "",
+                        'id': result_books[1][2] if len(result_books) else ""
                     },
                     {
-                        'name': result_books[2][0],
-                        'image': result_books[2][1],
-                        'id': result_books[2][2]
+                        'name': result_books[2][0] if len(result_books) else "",
+                        'image': result_books[2][1] if len(result_books) else "",
+                        'id': result_books[2][2] if len(result_books) else ""
                     }
                 ]
             },
@@ -114,19 +114,19 @@ def construct_graph(identifier):
                 'name': 'Movies',
                 'children': [
                     {
-                        'name': result_movies[0][0],
-                        'image': result_movies[0][1],
-                        'id': result_movies[0][2]
+                        'name': result_movies[0][0] if len(result_movies) else "",
+                        'image': result_movies[0][1] if len(result_movies) else "",
+                        'id': result_movies[0][2] if len(result_movies) else ""
                     },
                     {
-                        'name': result_movies[1][0],
-                        'image': result_movies[1][1],
-                        'id': result_movies[1][2]
+                        'name': result_movies[1][0] if len(result_movies) else "",
+                        'image': result_movies[1][1] if len(result_movies) else "",
+                        'id': result_movies[1][2] if len(result_movies) else ""
                     },
                     {
-                        'name': result_movies[2][0],
-                        'image': result_movies[2][1],
-                        'id': result_movies[2][2]
+                        'name': result_movies[2][0] if len(result_movies) else "",
+                        'image': result_movies[2][1] if len(result_movies) else "",
+                        'id': result_movies[2][2] if len(result_movies) else ""
                     }
                 ]
             },
@@ -134,19 +134,19 @@ def construct_graph(identifier):
                 'name': 'Games',
                 'children': [
                     {
-                        'name': result_games[0][0],
-                        'image': result_games[0][1],
-                        'id': result_games[0][2]
+                        'name': result_games[0][0] if len(result_games) else "",
+                        'image': result_games[0][1] if len(result_games) else "",
+                        'id': result_games[0][2] if len(result_games) else ""
                     },
                     {
-                        'name': result_games[1][0],
-                        'image': result_games[1][1],
-                        'id': result_games[1][2]
+                        'name': result_games[1][0] if len(result_games) else "",
+                        'image': result_games[1][1] if len(result_games) else "",
+                        'id': result_games[1][2] if len(result_games) else ""
                     },
                     {
-                        'name': result_games[2][0],
-                        'image': result_games[2][1],
-                        'id': result_games[2][2]
+                        'name': result_games[2][0] if len(result_games) else "",
+                        'image': result_games[2][1] if len(result_games) else "",
+                        'id': result_games[2][2] if len(result_games) else ""
                     }
                 ]
             }
