@@ -1,25 +1,191 @@
+import json
+import requests
+
+import pymongo
+import heapq
 from flask import Flask, render_template, request
 from flask_cors import CORS
 app = Flask(__name__)
 CORS(app)
 
+with open("password.txt") as file:
+    _client_password = file.read().strip()
+    client = pymongo.MongoClient(_client_password)
+    db = client.h
+    collection = db.raw
+
+
+def construct_graph(identifier):
+    books = dict()
+    movies = dict()
+    games = dict()
+
+    for doc in collection.find({'key': identifier}): #, "like": 1}):
+        user = doc['user']
+        for docc in collection.find({'user': user, 'id': {'$ne': identifier}}):
+            sid = docc['key']
+            typ = docc['type']
+            if typ == 'Book':
+                if sid not in books:
+                    books[sid] = -1
+                else:
+                    books[sid] -= 1
+            elif typ == 'Movie':
+                if sid not in movies:
+                    movies[sid] = -1
+                else:
+                    movies[sid] -= 1
+            elif typ == 'Game':
+                if sid not in games:
+                    games[sid] = -1
+                else:
+                    games[sid] -= 1
+        
+    heap_books = [(score, ide) for ide,score in books.items()]
+    heap_movies = [(score, ide) for ide,score in movies.items()]
+    heap_games = [(score, ide) for ide,score in games.items()]
+
+    print(heap_movies)
+    heapq.heapify(heap_books)
+    heapq.heapify(heap_games)
+    heapq.heapify(heap_movies)
+
+    recommended_books = heapq.nsmallest(3, heap_books)
+    recommended_movies = heapq.nsmallest(3, heap_movies)
+    recommended_games = heapq.nsmallest(3, heap_games)
+
+    result_books = []
+    result_movies = []
+    result_games = []
+
+    for _,ide in recommended_books:
+        doc = collection.find_one({'key': ide})
+        title = doc['title']
+        image = doc['image']
+        result_books.append((title, image, ide))
+
+    for _,ide in recommended_movies:
+        doc = collection.find_one({'key': ide})
+        title = doc['title']
+        image = doc['image']
+        result_movies.append((title, image, ide))
+
+    for _,ide in recommended_games:
+        doc = collection.find_one({'key': ide})
+        title = doc['title']
+        image = doc['image']
+        result_games.append((title, image, ide))
+
+    doc = collection.find_one({'key': identifier})
+
+    if doc is None:
+        print("Did not find medium")
+        return dict()
+
+    title = doc['title']
+    image = doc['image']
+    selected = (title, image, ide)
+
+    graph = {
+        'name': selected[0],
+        'image': selected[1],
+        'children': [
+            {
+                'name': 'Books',
+                'children': [
+                    {
+                        'name': result_books[0][0],
+                        'image': result_books[0][1],
+                        'id': result_books[0][2]
+                    },
+                    {
+                        'name': result_books[1][0],
+                        'image': result_books[1][1],
+                        'id': result_books[1][2]
+                    },
+                    {
+                        'name': result_books[2][0],
+                        'image': result_books[2][1],
+                        'id': result_books[2][2]
+                    }
+                ]
+            },
+            {
+                'name': 'Movies',
+                'children': [
+                    {
+                        'name': result_movies[0][0],
+                        'image': result_movies[0][1],
+                        'id': result_movies[0][2]
+                    },
+                    {
+                        'name': result_movies[1][0],
+                        'image': result_movies[1][1],
+                        'id': result_movies[1][2]
+                    },
+                    {
+                        'name': result_movies[2][0],
+                        'image': result_movies[2][1],
+                        'id': result_movies[2][2]
+                    }
+                ]
+            },
+            {
+                'name': 'Games',
+                'children': [
+                    {
+                        'name': result_games[0][0],
+                        'image': result_games[0][1],
+                        'id': result_games[0][2]
+                    },
+                    {
+                        'name': result_games[1][0],
+                        'image': result_games[1][1],
+                        'id': result_games[1][2]
+                    },
+                    {
+                        'name': result_games[2][0],
+                        'image': result_games[2][1],
+                        'id': result_games[2][2]
+                    }
+                ]
+            }
+        ]
+    }
+    return graph
+
 
 @app.route('/')
 def main():
-    
-    content_id = request.args.get('id', None)
-    if content_id is not None:
-        # TODO: Fetch real data from database
-        with open("static/graph.json") as file: # Use file to refer to the file object
-            data = file.read()
-        return data
-        # return {
-        #     'Selected': {'id': 10101, 'title': 'Selected Item\'s Title', 'type': 'Movie'},
-        #     'Movies': [{'id': 12345, 'title': 'A Movie Title', 'score': 5}],
-        #     'Games': [{'id': 67890, 'title': 'A Game Title', 'score': 3}],
-        #     'Books': [{'id': 101112, 'title': 'A Book Title', 'score': 1}],
-        # }
+    key = request.args.get('key', None)
+    if key is not None:
+        print("Fetching suggestions for", key)
+        return construct_graph(key)
     return render_template('index.html')
+
+@app.route('/api/search')
+def search():
+    query = request.args.get('query')
+
+    url = "https://tastedive.com/api/autocomplete"
+
+    querystring = {"v":"3","target":"search","q":query}
+
+    response = requests.get(url, params=querystring)
+
+    return json.dumps(response.json()["suggestions"])
+
+@app.route('/api/get_key')
+def get_key():
+    query = request.args.get('query')
+
+    url = "https://tastedive.com/"
+
+    querystring = {"v":query,"t":"","q":"A"}
+
+    response = requests.get(url,params=querystring)
+
+    return response.url.split("/")[-1]
 
 if __name__ == '__main__':
     app.run('127.0.0.1', port=8080, debug=True)
