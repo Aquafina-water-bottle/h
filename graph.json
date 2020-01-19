@@ -1,0 +1,65 @@
+{
+    "name": "My Serach term",
+    "children": [
+        {
+            "name": "Books",
+            "children": [
+                {
+                    "name": "A book Title",
+                    "image": "idk.jpg",
+                    "id": 100
+                },
+                {
+                    "name": "A Worse Book Title",
+                    "image": "idk.jpg",
+                    "id": 100
+                }
+            ]
+        },
+        {
+            "name": "Movies",
+            "children": [
+                {
+                    "name": "A Good Film",
+                    "image": "idk.jpg",
+                    "id": 100
+                },
+                {
+                    "name": "A Bad Film",
+                    "image": "idk.jpg",
+                    "id": 100
+                }
+            ]
+        },
+        {
+            "name": "Games",
+            "children": [
+                {
+                    "name": "Minecraft",
+                    "image": "idk.jpg",
+                    "id": 100
+                },
+                {
+                    "name": "Fortnite",
+                    "image": "idk.jpg",
+                    "id": 100
+                }
+            ]
+        },
+        {
+            "name": "Music",
+            "children": [
+                {
+                    "name": "Good Music",
+                    "image": "idk.jpg",
+                    "id": 100
+                },
+                {
+                    "name": "Austins Music",
+                    "image": "idk.jpg",
+                    "id": 100
+                }
+            ]
+        }
+    ]
+}
