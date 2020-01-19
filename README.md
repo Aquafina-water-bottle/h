@@ -10,5 +10,6 @@ Project for HackED 2020.
 
 Enter the following command into a terminal
 ```
-env FLASH_APP=server.py flask run
+python server.py
 ```
+Note: Use Python 3
