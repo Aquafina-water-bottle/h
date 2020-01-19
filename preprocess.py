@@ -29,16 +29,15 @@ from pymongo import MongoClient
 USER = 0
 TITLE = 1
 KEY = 2
-NAME = 3
-ID = 4
-LIKE = 5
-TYPE = 6
-P_LIKE = 7
-P_DISLIKE = 8
-P_MEH = 9
-NUM_LIKES = 10
-YEAR = 11
-IMAGE = 12
+ID = 3
+LIKE = 4
+TYPE = 5
+P_LIKE = 6
+P_DISLIKE = 7
+P_MEH = 8
+NUM_LIKES = 9
+YEAR = 10
+IMAGE = 11
 
 def parse_csv():
     with open('data.csv') as csvfile:
