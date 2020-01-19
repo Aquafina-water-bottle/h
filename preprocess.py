@@ -77,6 +77,7 @@ def parse_csv():
         all_row_ids = set()
         stored_user = None
 
+        count_media = 0
         count = -1
 
         for row in csv_reader:
@@ -91,8 +92,14 @@ def parse_csv():
 
             # adds to media db
             if row[ID] not in all_row_ids:
-                all_row_ids.add(row[ID])
-                add_media_data(row)
+                if count_media >= 20:
+                    write_media_data()
+                    count_media = 0
+                    MEDIA_COLLECTION_INSERTS.clear()
+                else:
+                    all_row_ids.add(row[ID])
+                    add_media_data(row)
+                    count_media += 1
 
             if stored_user is None:
                 stored_user = row[USER]
@@ -110,17 +117,21 @@ def parse_csv():
         # final user
         add_and_write_relation_data(user_rows)
 
-        write_media_data()
+        if count_media > 0:
+            write_media_data()
 
 
 def add_media_data(row):
     # _id string
-    data = {"_id": row[ID], "title": row[TITLE], "image": row[IMAGE]}
+    data = {"_id": row[ID], "type": row[TYPE], "title": row[TITLE], "image": row[IMAGE]}
     MEDIA_COLLECTION_INSERTS.append(data)
 
 
 def write_media_data():
-    MEDIA_DB.insert_many(MEDIA_COLLECTION_INSERTS, ordered=False)
+    try:
+        MEDIA_DB.insert_many(MEDIA_COLLECTION_INSERTS, ordered=False)
+    except BulkWriteError as bwe:
+        pprint.pprint(bwe.details)
 
 
 def add_and_write_relation_data(rows):
@@ -144,11 +155,11 @@ def add_and_write_relation_data(rows):
             if k1 == k2:
                 continue
 
-            batch.append(UpdateOne({"_id": k2}, {"$inc": {"score": 1}},
-                                   upsert=True))
+            # batch.append(UpdateOne({"_id": k2}, {"$inc": {"score": 1}}, upsert=True))
+            batch.append(UpdateOne({"from": k1, "to": k2}, {"$inc": {"score": 1}}, upsert=True))
 
         try:
-            RELATIONS_DB[k1].bulk_write(batch, ordered=False)
+            RELATIONS_DB.bulk_write(list(batch), ordered=False)
         except BulkWriteError as bwe:
             pprint.pprint(bwe.details)
 
