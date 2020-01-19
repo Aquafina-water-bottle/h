@@ -115,7 +115,8 @@ def parse_csv():
 
 def add_media_data(row):
     # _id string
-    data = {"_id": row[ID], "title": row[TITLE], "image": row[IMAGE]}
+    data = {"_id": row[ID], "type": row[TYPE],
+            "title": row[TITLE], "image": row[IMAGE]}
     MEDIA_COLLECTION_INSERTS.append(data)
 
 
