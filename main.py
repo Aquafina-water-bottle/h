@@ -45,6 +45,7 @@ def construct_graph(identifier):
     heap_movies = [(score, ide) for ide,score in movies.items()]
     heap_games = [(score, ide) for ide,score in games.items()]
 
+    print(heap_movies)
     heapq.heapify(heap_books)
     heapq.heapify(heap_games)
     heapq.heapify(heap_movies)
