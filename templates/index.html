@@ -71,13 +71,12 @@
     }]
 
     networkSeries.dataFields.value = "value";
-    networkSeries.nodes.template.tooltipText = "{name}:{id}";
     networkSeries.nodes.template.fillOpacity = 1;
     networkSeries.manyBodyStrength = -20;
     networkSeries.links.template.strength = 0.8;
     networkSeries.minRadius = am4core.percent(3);
 
-    networkSeries.fontSize = 10;
+    networkSeries.fontSize = 50;
 
   }); // end am4core.ready()
   function drawGraph() {
@@ -92,13 +91,13 @@
 
       chart.data = chart.data = [{
       "value": 100,
-      "name": "loading"
+      "name": "Loading"
     }, {
       "value": 20,
       "name": "h"
     }, {
       "value": 10,
-      "name": "Loading"
+      "name": "h"
     }, {
       "value": 75,
       "name": "h"
@@ -107,13 +106,13 @@
       "name": "h"
     }, {
       "value": 100,
-      "name": "loading"
+      "name": "Loading"
     }, {
       "value": 20,
       "name": "h"
     }, {
       "value": 10,
-      "name": "Loading"
+      "name": "h"
     }, {
       "value": 75,
       "name": "h"
@@ -122,13 +121,13 @@
       "name": "h"
     }, {
       "value": 100,
-      "name": "loading"
+      "name": "Loading"
     }, {
       "value": 20,
       "name": "h"
     }, {
       "value": 10,
-      "name": "Loading"
+      "name": "h"
     }, {
       "value": 75,
       "name": "h"
@@ -145,7 +144,7 @@
       networkSeries.minRadius = am4core.percent(3);
 
       networkSeries.nodes.template.label.text = "{name}"
-      networkSeries.fontSize = 10;
+      networkSeries.fontSize = 45;
 
     }); // end am4core.ready()
     fetch("http://127.0.0.1:8080/?id=4352")
