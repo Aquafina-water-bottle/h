@@ -38,7 +38,7 @@ $( document ).ready(function() {
         },
         onChooseEvent: function() {
           var key_query = $("#searchBar").getSelectedItemData().data;
-          fetch("http://localhost:8080/api/get_key?query="+key_query, {
+          fetch("/api/get_key?query="+key_query, {
             "method": "GET",
           })
           .then(response => {
@@ -193,7 +193,7 @@ $( document ).ready(function() {
       networkSeries.fontSize = 45;
 
     }); // end am4core.ready()
-    fetch("http://127.0.0.1:8080/?key="+key)
+    fetch("/?key="+key)
       .then(function (response) {
         response.text().then(function (text) {
           var jsonFile = text;
