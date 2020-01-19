@@ -55,11 +55,14 @@ IMAGE = 11
 # so always skipped and starts at 2nd row, indexed 1
 START_ROW = 1
 
+MAX_BATCH_SIZE = 10000000
+
 
 # gets client, password lol
-with open("password.txt") as file:
-    _client_password = file.read().strip()
-    CLIENT = MongoClient(_client_password)
+# with open("password.txt") as file:
+#     _client_password = file.read().strip()
+#     CLIENT = MongoClient(_client_password)
+CLIENT = MongoClient()
 
 MEDIA_DB = CLIENT.h["media"]
 RELATIONS_DB = CLIENT.h["relations"]
@@ -77,7 +80,6 @@ def parse_csv():
         all_row_ids = set()
         stored_user = None
 
-        count_media = 0
         count = -1
 
         for row in csv_reader:
@@ -92,14 +94,12 @@ def parse_csv():
 
             # adds to media db
             if row[ID] not in all_row_ids:
-                if count_media >= 20:
+                all_row_ids.add(row[ID])
+                add_media_data(row)
+
+                if len(MEDIA_COLLECTION_INSERTS) > MAX_BATCH_SIZE:
                     write_media_data()
-                    count_media = 0
                     MEDIA_COLLECTION_INSERTS.clear()
-                else:
-                    all_row_ids.add(row[ID])
-                    add_media_data(row)
-                    count_media += 1
 
             if stored_user is None:
                 stored_user = row[USER]
@@ -117,8 +117,7 @@ def parse_csv():
         # final user
         add_and_write_relation_data(user_rows)
 
-        if count_media > 0:
-            write_media_data()
+        write_media_data()
 
 
 def add_media_data(row):
@@ -145,23 +144,32 @@ def add_and_write_relation_data(rows):
 
     # stores row1 -> row2 -> score
     # might have to switch to query
+
+    batch = deque()
+
     for row1 in rows:
 
         k1 = row1[ID]
-        batch = deque()
 
         for row2 in rows:
             k2 = row2[ID]
             if k1 == k2:
                 continue
 
-            # batch.append(UpdateOne({"_id": k2}, {"$inc": {"score": 1}}, upsert=True))
             batch.append(UpdateOne({"from": k1, "to": k2}, {"$inc": {"score": 1}}, upsert=True))
 
-        try:
-            RELATIONS_DB.bulk_write(list(batch), ordered=False)
-        except BulkWriteError as bwe:
-            pprint.pprint(bwe.details)
+            if len(batch) > MAX_BATCH_SIZE:
+                try:
+                    RELATIONS_DB.bulk_write(list(batch), ordered=False)
+                except BulkWriteError as bwe:
+                    pprint.pprint(bwe.details)
+                batch.clear()
+
+    try:
+        RELATIONS_DB.bulk_write(list(batch), ordered=False)
+    except BulkWriteError as bwe:
+        pprint.pprint(bwe.details)
+
 
 
 def main():
