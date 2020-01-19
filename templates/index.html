@@ -25,6 +25,7 @@
 <!-- Chart code -->
 <script>
 
+$( document ).ready(function() {
   var options = {
     url: function(query) {
       return "/api/search?query="+query;
@@ -47,7 +48,8 @@
   };
 
   $("#searchBar").easyAutocomplete(options);
-  
+});
+
   am4core.ready(function () {
 
     // Themes begin
