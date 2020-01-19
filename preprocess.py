@@ -49,6 +49,11 @@ YEAR = 10
 IMAGE = 11
 
 
+# actual start row is 0 with name specification
+# so always skipped and starts at 2nd row, indexed 1
+START_ROW = 1
+
+
 # gets client, password lol
 with open("password.txt") as file:
     _client_password = file.read().strip()
@@ -67,18 +72,18 @@ def parse_csv():
         user_row_ids = set()
         all_row_ids = set()
         stored_user = None
-        first_row = True
 
-        count = 0
+        count = -1
 
         for row in csv_reader:
-            # skip first row
-            if first_row:
-                first_row = False
+            count += 1
+
+            # skips all rows until START_ROW
+            if count <= START_ROW:
                 continue
 
-            if count % 10 == 0:
-                print(count)
+            if (count % 10) == 0:
+                print(str(count) + "...")
 
             # adds to media db
             if row[ID] not in all_row_ids:
@@ -115,35 +120,55 @@ def add_relation_data(rows):
     inserts all of row2 media into row1 as long as row2 != row1
 
     NOTE: does NOT add to mongodb yet due to query delays
+    just skips duplicate errors for now instead of updating
     """
 
     # stores row1 -> row2 -> score
     # might have to switch to query
     for row1 in rows:
         for row2 in rows:
-            if row1[ID] == row2[ID]:
+            k1 = row1[ID]
+            k2 = row2[ID]
+            if k1 == k2:
                 continue
 
-            if row1[ID] not in GLOBAL_RELATIONS:
-                GLOBAL_RELATIONS[row1[ID]] = {}     # empty dict
-            if row2[ID] not in GLOBAL_RELATIONS[row1[ID]]:
-                GLOBAL_RELATIONS[row1[ID]][row2[ID]] = 0
-            GLOBAL_RELATIONS[row1[ID]][row2[ID]] += 1
-
-            #data = {"_id": row2[ID], 
-            #RELATIONS_DB[row1[ID]]
-
-    for k1 in GLOBAL_RELATIONS:
-        data1 = {"_id": k1}
-        #result1 = RELATIONS_DB.insert_one(data1)
-        for k2 in GLOBAL_RELATIONS[k1]:
-            data2 = {"_id": k2, "score": GLOBAL_RELATIONS[k1][k2]}
+            #data2 = {"_id": k2, "$inc": {"score": 1}}
             #RELATIONS_DB.find_one_and_update(data1, data2 upsert=True)
             try:
-                RELATIONS_DB[k1].insert(data2)
+                RELATIONS_DB[k1].update_one(
+                        {"_id": k2}, {"$inc": {"score": 1}}, upsert=True)
             except pymongo.errors.DuplicateKeyError:
                 pass
             #result1.insert(data2)
+
+            #if row1[ID] not in GLOBAL_RELATIONS:
+            #    GLOBAL_RELATIONS[row1[ID]] = {}     # empty dict
+            #if row2[ID] not in GLOBAL_RELATIONS[row1[ID]]:
+            #    GLOBAL_RELATIONS[row1[ID]][row2[ID]] = 0
+            #GLOBAL_RELATIONS[row1[ID]][row2[ID]] += 1
+
+            #data = {"_id": row2[ID],
+            #RELATIONS_DB[row1[ID]]
+
+    for k1 in GLOBAL_RELATIONS:
+        #data1 = {"_id": k1}
+        #result1 = RELATIONS_DB.insert_one(data1)
+        data2_list = [{"_id": k2, "score": GLOBAL_RELATIONS[k1][k2]}
+                for k2 in GLOBAL_RELATIONS[k1]]
+
+        try:
+            RELATIONS_DB[k1].insert_many(data2_list)
+        except pymongo.errors.BulkWriteError:
+            pass
+
+        #for k2 in GLOBAL_RELATIONS[k1]:
+        #    data2 = {"_id": k2, "score": GLOBAL_RELATIONS[k1][k2]}
+        #    #RELATIONS_DB.find_one_and_update(data1, data2 upsert=True)
+        #    try:
+        #        RELATIONS_DB[k1].insert(data2)
+        #    except pymongo.errors.DuplicateKeyError:
+        #        pass
+        #    #result1.insert(data2)
 
 
     #print(list(row[TITLE] for row in rows))
@@ -178,6 +203,6 @@ def delete_all():
 
 if __name__ == "__main__":
     #main()
-    delete_all()
-    #parse_csv()
+    #delete_all()
+    parse_csv()
 
